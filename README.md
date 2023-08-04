@@ -1,2 +1,2 @@
-# xChat-Sharp
-My encrypted chatting program, xChat, reworked &amp; created for cSharp.
+# xChat
+An encrypted chatting app created in Python using Google Firebase.
