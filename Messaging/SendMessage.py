@@ -5,9 +5,10 @@ from Encryption import Encrypt
 
 from initialization import database
 class SendMessage(object):
-    def __init__(self, message, user):
+    def __init__(self, message, user, server):
         self.message = message
         self.user = user
+        self.server = server
 
         message_payload = {
             "User" : self.user,
@@ -21,7 +22,7 @@ class SendMessage(object):
         message_payload["MessageID"] = str(uuid.uuid4())
         message_payload["User"] = Encrypt(self.user)
 
-        database.collection("messages").document(message_payload["MessageID"]).set(message_payload)
+        database.collection(server).document(message_payload["MessageID"]).set(message_payload)
 
         self.payload = message_payload
 

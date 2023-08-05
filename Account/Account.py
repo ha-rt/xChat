@@ -1,4 +1,3 @@
-from Account import Verification
 from initialization import database
 
 from hashlib import md5
@@ -15,21 +14,15 @@ class Account(object):
         name = self.name
         password = self.password
 
-        checkdocument = database.collection("users").document(name.lower())
-        getdocument = checkdocument.get()
+        user_payload = {
+            "Name" : name,
+            "Password" : md5(password.encode('utf-8')).hexdigest(),
+            "UserID" :  str(uuid4()),
+        }
 
-        if getdocument.exists:
-            return "Exists"
-        else:
-            user_paylod = {
-                "Name" : name,
-                "Password" : md5(password.encode('utf-8')).hexdigest(),
-                "UserID" :  str(uuid4()),
-            }
+        database.collection("users").document(user_payload["Name"].lower()).set(user_payload)
 
-            database.collection("users").document(user_paylod["Name"].lower()).set(user_paylod)
-
-            return True
+        return True
 
     def signin(self):
         name = self.name
@@ -40,5 +33,3 @@ class Account(object):
 
         if getdocument.exists:
             return VerifyPassword(password, name)
-        else:
-            return "None"

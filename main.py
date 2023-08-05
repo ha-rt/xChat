@@ -1,19 +1,22 @@
 from os import system
+from pyautogui import sleep
 
 from Messaging import SendMessage, DeleteMessage
 from Messaging import LoadMessages
 
 from Encryption import Decrypt
 
-from Account import Account
+from Account import Account, checkExistance
+
+from Server import Server
 
 name,password,signin = None,None,None
 def clear(): system('cls')
 
 system("title xChat")
 
-def messagingPlatform(userAccount):
-    messages = LoadMessages()
+def messagingPlatform(userAccount, server):
+    messages = LoadMessages(server.name)
     clear()
     for message in messages:
         if Decrypt(message["User"]).decode() == "admin":
@@ -25,40 +28,59 @@ def messagingPlatform(userAccount):
     if msg == "--logout":
         return startLogin()
 
-    SendMessage(msg, userAccount.name)
-    return messagingPlatform(userAccount)
+    if msg == "--updatepass":
+        server.updatePassword(userAccount.name, input("What would you like the new password to be? (n = none, else = password): "))
+        return messagingPlatform(userAccount, server)
 
+    if msg == "--switchserv":
+        return serverLogin(userAccount)
+
+    SendMessage(msg, userAccount.name, server.name)
+    return messagingPlatform(userAccount, server)
+
+def serverLogin(userAccount):
+    clear()
+
+    server = input("Which server would you like to connect to?: ")
+    if server == "--logout":
+        return startLogin()
+    server = Server(server, name)
+
+    passwordCheck = server.checkPass()
+
+    if passwordCheck == False:
+        print("The password you inputted for this server was incorrect, please try again or switch to a different server.")
+        sleep(1)
+        return serverLogin(userAccount)
+
+    return messagingPlatform(userAccount, server)
 def startLogin():
     global name,password,signin
-
     clear()
 
     name = input("Username: ")
     password = input("Password: ")
-    signin = input("Already Have Account? (y/n): ")
-
-    if signin != "y" and signin != "n":
-        print("error")
-        return startLogin()
 
     userAccount = Account(name, password)
+    token = None
 
-    if signin == "y":
+    if checkExistance(name) == True:
         token = userAccount.signin()
 
-        if token == False:
-            print("The password is incorrect")
-            return startLogin()
-        elif token == True:
-            messagingPlatform(userAccount)
-        else:
-            print("An account with this name doesn't exist.")
-    else:
+    if checkExistance(name) == False:
         token = userAccount.signup()
 
-        if token == "Exists":
-            print("An account with this name already exists")
-            return startLogin()
+    if token == None:
+        print("ERROR: THE ACCOUNT LOGIN TOKEN WAS NIL AFTER SIGN PROCESSES")
+        sleep(1)
+        return startLogin()
 
-        messagingPlatform(userAccount)
+    if token == False:
+        print("An account was found with the username you inputted, but the password you inputted did not match the accounts password.")
+        sleep(1)
+        return startLogin()
+
+    if token == True:
+        serverLogin(userAccount)
+
 startLogin()

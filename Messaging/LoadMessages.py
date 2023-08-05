@@ -2,8 +2,8 @@ from Encryption import Decrypt
 
 from initialization import database
 
-def LoadMessages():
-    collection = database.collection("messages").order_by("Time").stream()
+def LoadMessages(server):
+    collection = database.collection(server).order_by("Time").stream()
     documents = []
 
     for document in collection:

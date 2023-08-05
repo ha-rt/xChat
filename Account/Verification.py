@@ -15,3 +15,12 @@ def VerifyPassword(password, name):
     else:
         print("ERROR: USER DOES NOT EXIST")
         return False
+
+def checkExistance(name):
+    checkdocument = database.collection("users").document(name.lower())
+    getdocument = checkdocument.get()
+
+    if getdocument.exists:
+        return True
+
+    return False
