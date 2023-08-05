@@ -1,13 +1,9 @@
 from os import system
 from pyautogui import sleep
 
-from Messaging import SendMessage, DeleteMessage
-from Messaging import LoadMessages
-
+from Messaging import Message, LoadMessages
 from Encryption import Decrypt
-
 from Account import Account, checkExistance
-
 from Server import Server
 
 name,password,signin = None,None,None
@@ -19,6 +15,8 @@ def messagingPlatform(userAccount, server):
     messages = LoadMessages(server.name)
     clear()
     for message in messages:
+        message = message.to_dict()
+
         if Decrypt(message["User"]).decode() == "admin":
             print("\033[1;31;40m" + Decrypt(message["User"]).decode() + "\033[0;37;40m: " + Decrypt(message["Message"]).decode() + " | " + message["Time"])
         else:
@@ -35,7 +33,9 @@ def messagingPlatform(userAccount, server):
     if msg == "--switchserv":
         return serverLogin(userAccount)
 
-    SendMessage(msg, userAccount.name, server.name)
+    message = Message(msg, userAccount.name, server.name)
+    message.Send()
+
     return messagingPlatform(userAccount, server)
 
 def serverLogin(userAccount):
@@ -44,6 +44,8 @@ def serverLogin(userAccount):
     server = input("Which server would you like to connect to?: ")
     if server == "--logout":
         return startLogin()
+    if server == "users":
+        print("This name has been restricted by the creator of xChat.")
     server = Server(server, name)
 
     passwordCheck = server.checkPass()

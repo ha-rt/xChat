@@ -1,30 +1,35 @@
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime,timezone
 import uuid
 from Encryption import Encrypt
-
+from Messaging import DeleteMessage
 from initialization import database
-class SendMessage(object):
+
+class Message(object):
     def __init__(self, message, user, server):
         self.message = message
         self.user = user
         self.server = server
+        self.message_id = str(uuid.uuid4())
+
+    def Send(self):
+        server = self.server
+        message_id = self.message_id
+        message = self.message
+        user = self.user
 
         message_payload = {
-            "User" : self.user,
-            "Message" : self.user,
-            "MessageID" : 0,
-            "Time" : 0
+            "User": Encrypt(user),
+            "Message": Encrypt(message),
+            "MessageID": message_id,
+            "Time": str(datetime.now(timezone.utc))
         }
-
-        message_payload["Message"] = Encrypt(self.message)
-        message_payload["Time"] = str(datetime.now(timezone.utc))
-        message_payload["MessageID"] = str(uuid.uuid4())
-        message_payload["User"] = Encrypt(self.user)
 
         database.collection(server).document(message_payload["MessageID"]).set(message_payload)
 
-        self.payload = message_payload
+    def Delete(self):
+        print("WARNING: THE DELETE FUNCTION IS CURRENTLY NOT IN USAGE AND WILL NOT WORK")
 
-    def returnPaylod(self):
-        return self.payload
+        # message_id = self.message_id
+        # server = self.server
+        #
+        # DeleteMessage(message_id, server)

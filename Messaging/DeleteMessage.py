@@ -6,5 +6,6 @@ class DeleteMessage(object):
 
         if getdocument.exists:
             checkdocument.delete()
-        else:
-            print("ERROR: MESSAGE DELETED DOES NOT EXIST")
+            return
+
+        print("ERROR: MESSAGE DELETED DOES NOT EXIST")

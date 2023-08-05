@@ -1,4 +1,4 @@
-from Encryption.Configuration import ENCRYPTION_KEY
+from credentials import ENCRYPTION_KEY
 from cryptography.fernet import Fernet
 
 encryptor = Fernet(ENCRYPTION_KEY)
