@@ -1,5 +1,12 @@
+<style>
+H2{color:DarkOrange !important;}
+</style>
+
+
 # <img src="https://i.imgur.com/yJurJW4.png" style="width=100px;">
 xChat is ah encrypted terminal chatting app, currently created by one person. It allows for chatting in servers, and has constant updates!
+
+## xChat's firebase is currently down due to security issues, you **MUST** create your own database to use xChat, read below.
 
 # <img src="https://i.imgur.com/AhcwcJm.png" style="width=100px;">
 
